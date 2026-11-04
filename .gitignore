@@ -1,0 +1,14 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dependencias y caches
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+
+# Secretos
+.env
+*.key
