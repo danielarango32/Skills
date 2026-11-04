@@ -44,6 +44,12 @@ function Move-ToBackup([string]$Path, [string]$Label) {
     Write-Host "    Copia de seguridad: $destination" -ForegroundColor Yellow
 }
 
+function Invoke-GitQuiet {
+    # En PowerShell 5.1, redirigir stderr de un comando nativo con 'Stop' lanza excepcion.
+    $ErrorActionPreference = 'Continue'
+    & git @args 2>$null
+}
+
 function Get-NormalizedPath([string]$Path) {
     return [System.IO.Path]::GetFullPath($Path).TrimEnd('\')
 }
@@ -53,7 +59,7 @@ if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
 }
 
 if (-not $RepoUrl -and $PSScriptRoot -and (Test-Path (Join-Path $PSScriptRoot '.git'))) {
-    $RepoUrl = (git -C $PSScriptRoot remote get-url origin 2>$null)
+    $RepoUrl = (Invoke-GitQuiet -C $PSScriptRoot remote get-url origin)
 }
 
 New-Item -ItemType Directory -Force -Path $geminiDir, $agyConfig | Out-Null
@@ -61,8 +67,13 @@ New-Item -ItemType Directory -Force -Path $geminiDir, $agyConfig | Out-Null
 # 1) Repositorio en ~/.gemini/skills (Gemini CLI)
 Write-Step "Skills de Gemini CLI en $skillsDir"
 if (Test-Path (Join-Path $skillsDir '.git')) {
-    git -C $skillsDir pull --ff-only
-    if ($LASTEXITCODE -ne 0) { throw 'git pull fallo. Revisa cambios locales con: git -C ~/.gemini/skills status' }
+    Invoke-GitQuiet -C $skillsDir rev-parse --abbrev-ref --symbolic-full-name '@{u}' | Out-Null
+    if ($LASTEXITCODE -eq 0) {
+        git -C $skillsDir pull --ff-only
+        if ($LASTEXITCODE -ne 0) { throw 'git pull fallo. Revisa cambios locales con: git -C ~/.gemini/skills status' }
+    } else {
+        Write-Host '    El repo aun no tiene remoto configurado; se omite git pull.' -ForegroundColor Yellow
+    }
 } else {
     if (-not $RepoUrl) { throw 'No se encontro la URL del repo. Ejecuta: install.ps1 -RepoUrl https://github.com/<usuario>/gemini-skills.git' }
     if (Test-Path $skillsDir) { Move-ToBackup $skillsDir 'gemini-skills' }
