@@ -7,15 +7,15 @@ Esta carpeta es la **fuente única** de mis skills. Vive en `~/.gemini/skills` (
 Requisito: Git (`winget install --id Git.Git -e`). La primera vez, Git abrirá el navegador para iniciar sesión en GitHub.
 
 ```powershell
-git clone https://github.com/<usuario>/gemini-skills.git "$HOME\.gemini\skills"
+git clone https://github.com/danielarango32/Gemini-Skills.git "$HOME\.gemini\skills"
 powershell -ExecutionPolicy Bypass -File "$HOME\.gemini\skills\install.ps1" -AutoUpdate
 ```
 
 Si `~/.gemini/skills` ya existía, clona en otra carpeta y ejecuta el script desde ahí; él mueve la carpeta vieja a `~/.gemini/backups/` y clona en el sitio correcto:
 
 ```powershell
-git clone https://github.com/<usuario>/gemini-skills.git "$env:TEMP\gemini-skills"
-powershell -ExecutionPolicy Bypass -File "$env:TEMP\gemini-skills\install.ps1" -AutoUpdate
+git clone https://github.com/danielarango32/Gemini-Skills.git "$env:TEMP\Gemini-Skills"
+powershell -ExecutionPolicy Bypass -File "$env:TEMP\Gemini-Skills\install.ps1" -AutoUpdate
 ```
 
 `-AutoUpdate` hace `git pull` automáticamente cada vez que inicias sesión en Windows.
@@ -23,7 +23,7 @@ powershell -ExecutionPolicy Bypass -File "$env:TEMP\gemini-skills\install.ps1" -
 ## Equipo nuevo (macOS / Linux)
 
 ```bash
-git clone https://github.com/<usuario>/gemini-skills.git ~/.gemini/skills
+git clone https://github.com/danielarango32/Gemini-Skills.git ~/.gemini/skills
 bash ~/.gemini/skills/install.sh
 ```
 
